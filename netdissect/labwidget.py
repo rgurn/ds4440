@@ -620,7 +620,11 @@ function getChan(obj_id) {
       var args = ev.content.data.slice(1);
       for (fn of chan) { fn.apply(null, args); }
     });
-    chan.retry = setInterval(() => { chan.comm.open(); }, 2000);
+    chan.retries = 5;
+    chan.retry = setInterval(() => {
+      if (chan.retries) { chan.retries -= 1; chan.comm.open(); }
+      else { clearInterval(chan.retry); chan.retry = null; }
+    }, 2000);
   }
   return chan;
 }
