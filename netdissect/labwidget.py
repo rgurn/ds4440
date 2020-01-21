@@ -515,8 +515,9 @@ class Div(Widget):
         self.style = Property(style)
         self.click = Trigger()
 
-    def print(self, text, replace=False):
-        newHTML = '<pre>%s</pre>' % html.escape(str(text));
+    def print(self, *args, replace=False):
+        newHTML = '<pre>%s</pre>' % ' '.join(
+                html.escape(str(text)) for text in args)
         if replace:
             self.innerHTML = newHTML
         else:
