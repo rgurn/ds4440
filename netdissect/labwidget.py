@@ -368,7 +368,10 @@ class Property(Trigger):
             self.trigger(value)
 
 class capture_output(object):
-    """Context manager for capturing stdout/stderr"""
+    """Context manager for capturing stdout/stderr.  This is used,
+    by default, to wrap handler code that is invoked by a triggering
+    event coming from javascript.  Any stdout/stderr or exceptions
+    that are thrown are formatted and written above the relevant widget."""
     def __init__(self, widget):
         from io import StringIO
         self.widget = widget
@@ -541,6 +544,10 @@ class Choice(Widget):
 
 
 class Div(Widget):
+    """
+    Just an empty DIV element.  Use the innerHTML property to
+    change its contents, or use the clear() and print() method.
+    """
     def __init__(self, innerHTML='', style=None, data=None):
         super().__init__()
         style = {} if style is None else style
@@ -551,7 +558,12 @@ class Div(Widget):
         self.style = Property(style)
         self.click = Trigger()
 
+    def clear(self):
+        """Clears the contents of the div."""
+        self.innerHTML = ''
+
     def print(self, *args, replace=False):
+        """Appends plain text (as a pre) into the div."""
         newHTML = '<pre>%s</pre>' % ' '.join(
                 html.escape(str(text)) for text in args)
         if replace:
