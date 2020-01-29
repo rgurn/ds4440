@@ -49,7 +49,7 @@ class Model(object):
             self.prop(n).on(cb)
         return self
 
-    def off(self, name, cb):
+    def off(self, name, cb=None):
         '''
         Unregisters a listener for named events and properties.
         A space-separated list of names can be provided as `name`.
@@ -256,6 +256,11 @@ class Widget(Model):
             cname = "comm_" + str(id(self))
             COMM_MANAGER.register_target(cname, open_comm)
 
+    def display(self):
+        from IPython.core.display import display
+        display(self)
+        return self
+
 class Trigger(object):
     """
     Trigger is the base class for Property and other data-bound
@@ -327,11 +332,12 @@ class Trigger(object):
         multiple listeners.
         '''
         self._listeners.append(cb)
-    def off(self, cb):
+    def off(self, cb=None):
         '''
         Unregisters a listener.
         '''
-        self._listeners = [c for c in self._listeners if c != cb]
+        self._listeners = [c for c in self._listeners
+                if c != cb and cb is not None]
 
 class Property(Trigger):
     """
@@ -459,6 +465,9 @@ class Textbox(Widget):
               model.set('value', element.value);
             }
           });
+          element.addEventListener('blur', (e) => {
+            model.set('value', element.value);
+          });
           model.on('value', (value) => {
             element.value = model.get('value');
           });
@@ -561,6 +570,10 @@ class Div(Widget):
     def clear(self):
         """Clears the contents of the div."""
         self.innerHTML = ''
+
+    def show(self, *args):
+        from . import show
+        self.innerHTML = show.html(args)
 
     def print(self, *args, replace=False):
         """Appends plain text (as a pre) into the div."""
