@@ -29,6 +29,8 @@ def from_image(im, target='zc', size=None):
 
 def from_url(url, target='zc', size=None):
     image_data = re.sub('^data:image/.+;base64,', '', url)
+    if not image_data:
+        return torch.zeros(*(size or (1, 1)))
     im = PIL.Image.open(io.BytesIO(base64.b64decode(image_data)))
     return from_image(im, target, size=size)
 
