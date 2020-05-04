@@ -11,8 +11,13 @@ def as_image(data, source='zc', target='byte'):
     return PIL.Image.fromarray(renorm(data).
             permute(1,2,0).cpu().numpy())
 
-def as_url(data, source='zc'):
-    img = as_image(data, source)
+def as_url(data, source='zc', size=None):
+    if isinstance(data, PIL.Image.Image):
+        img = data
+    else:
+        img = as_image(data, source)
+    if size is not None:
+        img = img.resize(size, resample=PIL.Image.BILINEAR)
     buffered = io.BytesIO()
     img.save(buffered, format='png')
     b64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
@@ -29,9 +34,9 @@ def from_image(im, target='zc', size=None):
 
 def from_url(url, target='zc', size=None):
     image_data = re.sub('^data:image/.+;base64,', '', url)
-    if not image_data:
-        return torch.zeros(*(size or (1, 1)))
     im = PIL.Image.open(io.BytesIO(base64.b64decode(image_data)))
+    if target == 'image' and size is None:
+        return im
     return from_image(im, target, size=size)
 
 def renormalizer(source='zc', target='zc'):
