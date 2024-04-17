@@ -175,7 +175,8 @@ if __name__ == '__main__':
     # models can be loaded into each of the custom nets.
     print('Loading alexnet')
     model = CustomAlexNet()
-    model.load_state_dict(model_zoo.load_url(alexnet_model_urls['alexnet']))
+    base = models.alexnet(pretrained=False)
+    model.load_state_dict(base.named_parameters())
     print('Loading resnet18')
     model = CustomResNet(18)
     model.load_state_dict(model_zoo.load_url(resnet.model_urls['resnet18']))
