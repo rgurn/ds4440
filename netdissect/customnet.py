@@ -4,9 +4,11 @@ Customized version of pytorch resnet, alexnets.
 
 import numpy, torch, math, os
 from torch import nn
+import torch
+import torchvision.models as models
 from collections import OrderedDict
 from torchvision.models import resnet
-from torchvision.models.alexnet import model_urls as alexnet_model_urls
+# from torchvision.models.alexnet import model_urls as alexnet_model_urls
 
 class CustomResNet(nn.Module):
     '''
